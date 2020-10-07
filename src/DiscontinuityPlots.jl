@@ -18,11 +18,12 @@ end
 
 @recipe function f(::Type{Val{:jump}}, x, y, z)
     rightcontinuous --> true
-    markersize --> 4
-    jumpsize --> 1e-3
-    seriescolor --> first(get_color_palette(:auto, 1))
+    markersize --> 5
+    jumpsize --> 1e-2
+    linewidth --> 2.5
+    markerstrokewidth --> 1
     x, y = jumpify(x, y, plotattributes[:jumpsize])
-    dashedlines = Tuple{Float64, Float64}[]
+    dottedlines = Tuple{Float64, Float64}[]
     filleddots = Tuple{Float64, Float64}[]
     hollowdots = Tuple{Float64, Float64}[]
     for i in 2:length(x)-1
@@ -32,7 +33,7 @@ end
             rightendpoint = (midx, y[i + 1])
             push!(hollowdots, plotattributes[:rightcontinuous] ? leftendpoint : rightendpoint)
             push!(filleddots, plotattributes[:rightcontinuous] ? rightendpoint : leftendpoint)
-            append!(dashedlines, [leftendpoint, rightendpoint, (NaN, NaN)])
+            append!(dottedlines, [leftendpoint, rightendpoint, (NaN, NaN)])
         end
     end
     @series begin
@@ -43,26 +44,33 @@ end
         ()
     end
     @series begin
-        x := first.(dashedlines)
-        y := last.(dashedlines)
+        x := first.(dottedlines)
+        y := last.(dottedlines)
         seriestype := :line
         primary := false
-        linestyle := :dash
+        linestyle := :dot
     end
+    color = Plots.get_series_color(
+        plotattributes[:seriescolor],
+        plotattributes[:subplot],
+        plotattributes[:series_plotindex], 
+        :path
+    )
     @series begin
         x := first.(hollowdots)
         y := last.(hollowdots)
         seriestype := :scatter
-        markerstrokewidth := 1
-        markerstrokecolor := plotattributes[:seriescolor]
-        seriescolor := :white
         primary := false
+        markersize := 0.9plotattributes[:markersize]
+        markerstrokecolor := color
+        markercolor := RGBA(1, 1, 1, 0)
+        markerstrokewidth := plotattributes[:linewidth]
     end
     @series begin
         x := first.(filleddots)
         y := last.(filleddots)
-        seriestype := :scatter
         markerstrokewidth := 0
+        seriestype := :scatter
         primary := false
     end
 end
