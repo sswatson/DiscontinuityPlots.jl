@@ -18,10 +18,7 @@ end
 
 @recipe function f(::Type{Val{:jump}}, x, y, z)
     rightcontinuous --> true
-    markersize --> 5
     jumpsize --> 1e-2
-    linewidth --> 2.5
-    markerstrokewidth --> 1
     x, y = jumpify(x, y, plotattributes[:jumpsize])
     dottedlines = Tuple{Float64, Float64}[]
     filleddots = Tuple{Float64, Float64}[]
@@ -36,11 +33,13 @@ end
             append!(dottedlines, [leftendpoint, rightendpoint, (NaN, NaN)])
         end
     end
+    markersize --> 5
+    linewidth --> 2.5
+    markerstrokewidth --> 1
     @series begin
         x := x
         y := y
         seriestype := :path
-        legend := :false
         ()
     end
     @series begin
@@ -50,19 +49,17 @@ end
         primary := false
         linestyle := :dot
     end
-    color = Plots.get_series_color(
-        plotattributes[:seriescolor],
-        plotattributes[:subplot],
-        plotattributes[:series_plotindex], 
-        :path
-    )
     @series begin
         x := first.(hollowdots)
         y := last.(hollowdots)
         seriestype := :scatter
         primary := false
-        markersize := 0.9plotattributes[:markersize]
-        markerstrokecolor := color
+        markerstrokecolor := Plots.get_series_color(
+            plotattributes[:seriescolor],
+            plotattributes[:subplot],
+            plotattributes[:series_plotindex],
+            :path
+        )
         markercolor := RGBA(1, 1, 1, 0)
         markerstrokewidth := plotattributes[:linewidth]
     end
