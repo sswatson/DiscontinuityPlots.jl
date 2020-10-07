@@ -1,0 +1,7 @@
+name = "DiscontinuityPlots"
+uuid = "5d7f3b9e-4a21-4914-968d-54c3df7961a6"
+authors = ["Samuel S. Watson <samuel.s.watson@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
